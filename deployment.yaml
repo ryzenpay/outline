@@ -20,8 +20,6 @@ spec:
       labels:
         app: outline
     spec:
-      imagePullSecrets:
-        - name: gitlabreg
       containers:
         - image: docker.getoutline.com/outlinewiki/outline:latest
           name: outline
@@ -51,6 +49,31 @@ spec:
               secretKeyRef:
                 name: outline-secret
                 key: UTILS_SECRET
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: outline-redis
+  annotations:
+    keel.sh/policy: minor
+    keel.sh/trigger: poll
+  name: outline-redis
+  namespace: outline
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: outline-redis
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: outline-redis
+    spec:
+      containers:
         - image: redis:latest
           name: outline-redis
           ports:
