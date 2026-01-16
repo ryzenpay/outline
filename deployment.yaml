@@ -9,7 +9,7 @@ metadata:
   name: outline
   namespace: outline
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: outline
