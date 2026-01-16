@@ -46,11 +46,11 @@ spec:
               secretKeyRef:
                 name: outline-secret
                 key: SECRET_KEY
-          - name: UTIL_KEY
+          - name: UTILS_SECRET
             valueFrom:
               secretKeyRef:
                 name: outline-secret
-                key: UTIL_KEY
+                key: UTILS_SECRET
         - image: redis:latest
           name: outline-redis
           ports:
