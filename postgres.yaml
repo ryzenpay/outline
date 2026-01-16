@@ -4,7 +4,7 @@ metadata:
   name: outline-postgresql
   namespace: outline
 spec:
-  instances: 3
+  instances: 1
   storage:
     size: 5Gi
     storageClass: retain
