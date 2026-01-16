@@ -1,0 +1,14 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: outline-postgresql
+  namespace: outline
+spec:
+  instances: 3
+  storage:
+    size: 5Gi
+    storageClass: retain
+  bootstrap:
+    initdb:
+      database: outline
+      owner: outline
