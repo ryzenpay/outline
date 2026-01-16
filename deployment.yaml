@@ -39,6 +39,8 @@ spec:
             value: info
           - name: REDIS_URL 
             value: redis://outline-redis:6379
+          - name: FORCE_HTTPS
+            value: "false"
           - name: SECRET_KEY
             valueFrom:
               secretKeyRef:
@@ -49,8 +51,16 @@ spec:
               secretKeyRef:
                 name: outline-secret
                 key: UTILS_SECRET
-          - name: FORCE_HTTPS
-            value: "false"
+          # keycloak authentication
+          - name: OIDC_ISSUER_UR
+            value: "https://auth.ryzen.me/realms/master"
+          - name: OIDC_CLIENT_ID
+            value: keycloak
+          - name: OIDC_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: outline-secret
+                key: OIDC_CLIENT_SECRET
           volumeMounts:
             - name: outline
               mountPath: /var/lib/outline/data
