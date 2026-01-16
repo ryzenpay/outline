@@ -19,7 +19,7 @@ metadata:
   labels:
     app: outline-redis
   name: outline-redis
-  namespace: outline-redis
+  namespace: outline
 spec:
   selector:
     app: outline-redis
