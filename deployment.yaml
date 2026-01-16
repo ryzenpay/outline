@@ -51,6 +51,13 @@ spec:
                 key: UTILS_SECRET
           - name: FORCE_HTTPS
             value: "false"
+          volumeMounts:
+            - name: outline
+              mountPath: /var/lib/outline/data
+      volumes:
+        - name: outline
+          persistentVolumeClaim:
+            claimName: outline-pvc
       restartPolicy: Always
 ---
 apiVersion: apps/v1

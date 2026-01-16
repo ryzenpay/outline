@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: outline-pvc
+  namespace: outline
+  labels:
+    app: outline
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: retain
+  resources:
+    requests:
+      storage: 10Gi
