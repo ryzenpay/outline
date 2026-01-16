@@ -39,6 +39,18 @@ spec:
             value: outline@ryzen.me
           - name: LOG_LEVEL
             value: info
+          - name: REDIS_URL 
+            value: redis://outline-redis:6379
+          - name: SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: outline-secret
+                key: SECRET_KEY
+          - name: UTIL_KEY
+            valueFrom:
+              secretKeyRef:
+                name: outline-secret
+                key: UTIL_KEY
         - image: redis:latest
           name: outline-redis
           ports:
