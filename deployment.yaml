@@ -49,6 +49,8 @@ spec:
               secretKeyRef:
                 name: outline-secret
                 key: UTILS_SECRET
+          - name: FORCE_HTTPS
+            value: "false"
       restartPolicy: Always
 ---
 apiVersion: apps/v1
