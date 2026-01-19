@@ -40,7 +40,7 @@ spec:
           - name: REDIS_URL 
             value: redis://outline-redis:6379
           - name: FORCE_HTTPS
-            value: "true"
+            value: "false"
           - name: SECRET_KEY
             valueFrom:
               secretKeyRef:
