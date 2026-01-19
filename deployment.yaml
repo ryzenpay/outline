@@ -52,7 +52,7 @@ spec:
                 name: outline-secret
                 key: UTILS_SECRET
           # keycloak authentication
-          - name: OIDC_ISSUER_UR
+          - name: OIDC_ISSUER_URL
             value: "https://auth.ryzen.me/realms/master"
           - name: OIDC_CLIENT_ID
             value: keycloak
