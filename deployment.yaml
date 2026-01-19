@@ -55,7 +55,7 @@ spec:
           - name: OIDC_ISSUER_URL
             value: "https://auth.ryzen.me/realms/master"
           - name: OIDC_CLIENT_ID
-            value: keycloak
+            value: outline
           - name: OIDC_CLIENT_SECRET
             valueFrom:
               secretKeyRef:
