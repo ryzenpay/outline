@@ -53,7 +53,7 @@ spec:
                 key: UTILS_SECRET
           # keycloak authentication
           - name: OIDC_ISSUER_URL
-            value: "https://auth.ryzen.me/realms/master"
+            value: "https://auth.ryzen.me/realms/public"
           - name: OIDC_CLIENT_ID
             value: outline
           - name: OIDC_CLIENT_SECRET
