@@ -16,7 +16,8 @@ ingress:
   host: ""
   path: /
   pathType: Prefix
-  tls: []
+  tls:
+    secretName: ""
 
 redis:
   enabled: true

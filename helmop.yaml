@@ -13,15 +13,9 @@ spec:
         enabled: true
         annotations:
           cert-manager.io/cluster-issuer: cert-issuer
-        hosts:
-          - host: outline.ryzen.me
-            paths:
-              - path: /
-                pathType: Prefix
+        host: outline.ryzen.me
         tls:
-          - hosts:
-              - outline.ryzen.me
-            secretName: outline-tls
+          secretName: outline-tls
       storage:
         s3:
           enabled: true
