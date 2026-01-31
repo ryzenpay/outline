@@ -2,7 +2,7 @@ apiVersion: fleet.cattle.io/v1alpha1
 kind: HelmOp
 metadata:
   name: outline
-  namespace: fleet-default
+  namespace: fleet-local
 spec:
   helm:
     pollingInterval: 1m
