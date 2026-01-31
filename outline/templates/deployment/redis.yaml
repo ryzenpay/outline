@@ -1,0 +1,11 @@
+{{ if .Values.redis.enabled }}
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: outline-redis
+  namespace: {{ .Values.namespace }}
+spec:
+  repo: https://valkey.io/valkey-helm/
+  chart: valkey
+  targetNamespace: {{ .Values.namespace }}
+{{ end }}

@@ -1,0 +1,16 @@
+{{ if not .Values.storage.s3.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: outline-pvc
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: outline
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ .Values.storage.storageClassName }}
+  resources:
+    requests:
+      storage: {{ .Values.storage.size }}
+{{ end }}

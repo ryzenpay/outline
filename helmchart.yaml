@@ -1,0 +1,32 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: outline
+spec:
+  chart: oci://harbor.ryzen.me/library/outline
+  version: 0.1.0
+  targetNamespace: outline
+  createNamespace: true
+  valuesContent: |-
+    ingress:
+      enabled: true
+      annotations:
+        cert-manager.io/cluster-issuer: cert-issuer
+      hosts:
+        - host: outline.ryzen.me
+          paths:
+            - path: /
+              pathType: Prefix
+      tls:
+        - hosts:
+            - outline.ryzen.me
+          secretName: outline-tls
+    storage:
+      s3:
+        enabled: true
+      size: 30Gi
+    oidc:
+      enabled: true
+      issuerUrl: https://auth.ryzen.me/realms/public
+      clientId: outline
+      clientSecretKeyRef: OIDC_CLIENT_SECRET

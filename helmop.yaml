@@ -1,0 +1,34 @@
+apiVersion: fleet.cattle.io/v1alpha1
+kind: HelmOp
+metadata:
+  name: outline
+  namespace: fleet-default
+spec:
+  helm:
+    pollingInterval: 1m
+    repo: oci://harbor.ryzen.me/library/outline
+    version: 0.1.0
+    values:
+      ingress:
+        enabled: true
+        annotations:
+          cert-manager.io/cluster-issuer: cert-issuer
+        hosts:
+          - host: outline.ryzen.me
+            paths:
+              - path: /
+                pathType: Prefix
+        tls:
+          - hosts:
+              - outline.ryzen.me
+            secretName: outline-tls
+      storage:
+        s3:
+          enabled: true
+        size: 30Gi
+      oidc:
+        enabled: true
+        issuerUrl: https://auth.ryzen.me/realms/public
+        clientId: outline
+        clientSecretKeyRef: OIDC_CLIENT_SECRET
+  defaultNamespace: outline

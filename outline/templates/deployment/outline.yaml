@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: outline
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: outline
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: outline
+    spec:
+      containers:
+        - image: {{ print .Values.image.repository ":" .Values.image.tag }}
+          name: outline
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          env:
+          {{ if .Values.ingress.tls }}
+          - name: URL
+            value: {{ print "https://" .Values.ingress.host }}
+          {{ else }}
+          - name: URL
+            value: {{ print "http://" .Values.ingress.host }}
+          {{ end }}
+          - name: DATABASE_URL
+            valueFrom:
+              secretKeyRef:
+                name: outline-postgresql-app
+                key: uri
+          - name: SMTP_FROM_EMAIL
+            value: outline@ryzen.me
+          - name: LOG_LEVEL
+            value: info
+          - name: FORCE_HTTPS
+            value: "false"
+          - name: SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: outline-secret
+                key: SECRET_KEY
+          - name: UTILS_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: outline-secret
+                key: UTILS_SECRET
+{{ if .Values.redis.enabled }}
+          - name: REDIS_URL 
+            value: redis://outline-redis-valkey:6379
+{{ end }}
+{{ if .Values.oidc.enabled }}
+          - name: OIDC_ISSUER_URL
+            value: {{ .Values.oidc.issuerUrl }}
+          - name: OIDC_CLIENT_ID
+            value: {{ .Values.oidc.clientId }}
+          - name: OIDC_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: outline-secret
+                key: {{ .Values.oidc.clientSecretKeyRef }}
+{{ end }}
+{{ if .Values.storage.s3.enabled }}
+          - name: FILE_STORAGE
+            value: s3
+          - name: AWS_ACCESS_KEY_ID
+            value: outline
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: outline-secret
+                key: S3_SECRET_KEY
+          - name: AWS_REGION
+            value: {{ .Values.storage.s3.region }}
+          - name: AWS_S3_UPLOAD_BUCKET_URL
+            value: http://outline-s3-minio:9000
+          - name: AWS_S3_UPLOAD_BUCKET_NAME
+            value: outline
+          - name: AWS_S3_FORCE_PATH_STYLE
+            value: {{ .Values.storage.s3.pathStyle | quote }}
+{{ else }}
+          - name: FILE_STORAGE
+            value: local
+          volumeMounts:
+            - name: outline
+              mountPath: /var/lib/outline/data
+      volumes:
+        - name: outline
+          persistentVolumeClaim:
+            claimName: outline-pvc
+{{ end }}
+      restartPolicy: Always

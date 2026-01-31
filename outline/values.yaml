@@ -1,0 +1,37 @@
+replicaCount: 1
+
+image:
+  repository: docker.getoutline.com/outlinewiki/outline
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 3000
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  host: ""
+  path: /
+  pathType: Prefix
+  tls: []
+
+redis:
+  enabled: true
+
+storage:
+  s3:
+    enabled: true
+    region: us-east-1
+    pathStyle: true
+  storageClassName: ""
+  size: 10Gi
+
+oidc:
+  enabled: true
+  issuerUrl: ""
+  clientId: outline
+  clientSecretKeyRef: OIDC_CLIENT_SECRET
+  clientSecret: ""

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: outline
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: outline
+spec:
+  ports:
+    - name: http
+      port: {{ .Values.service.port }}
+  selector:
+    app: outline
+  type: {{ .Values.service.type }}
