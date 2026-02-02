@@ -20,9 +20,24 @@ spec:
                 name: outline
                 port:
                   number: {{ $.Values.service.port }}
+{{-  if .Values.storage.s3.enabled }}
+    - host: {{ print "s3." .Values.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: outline-s3-minio
+                port:
+                  number: 9000
+{{- end }}
   {{- if .Values.ingress.tls }}
   tls:
     - hosts:
         - {{ .Values.ingress.host }}
+  {{- if .Values.storage.s3.enabled }}
+        - {{ print "s3." .Values.ingress.host }}
+  {{- end }}
       secretName: {{ .Values.ingress.tls.secretName }}
   {{- end }}
