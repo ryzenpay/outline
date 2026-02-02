@@ -18,8 +18,9 @@ spec:
           secretName: outline-tls
       storage:
         s3:
-          enabled: true
+          enabled: false
         size: 30Gi
+        storageClassName: retain
       oidc:
         enabled: true
         issuerUrl: https://auth.ryzen.me/realms/public
