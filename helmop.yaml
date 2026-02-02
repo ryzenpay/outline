@@ -25,5 +25,8 @@ spec:
         enabled: true
         issuerUrl: https://auth.ryzen.me/realms/public
         clientId: outline
-        clientSecretKeyRef: OIDC_CLIENT_SECRET
+        secret:
+          existing: true
+          name: outline-oidc-secret
+          clientSecretKeyRef: OIDC_CLIENT_SECRET
   defaultNamespace: outline

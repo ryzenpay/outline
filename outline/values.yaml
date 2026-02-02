@@ -34,5 +34,8 @@ oidc:
   enabled: true
   issuerUrl: ""
   clientId: outline
-  clientSecretKeyRef: OIDC_CLIENT_SECRET
-  clientSecret: ""
+  secret:
+    name: outline-secret
+    existing: false
+    clientSecretKeyRef: OIDC_CLIENT_SECRET
+    clientSecret: ""

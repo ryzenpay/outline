@@ -63,8 +63,8 @@ spec:
           - name: OIDC_CLIENT_SECRET
             valueFrom:
               secretKeyRef:
-                name: outline-secret
-                key: {{ .Values.oidc.clientSecretKeyRef }}
+                name: {{ .Values.oidc.secret.name }}
+                key: {{ .Values.oidc.secret.clientSecretKeyRef }}
 {{ end }}
 {{ if .Values.storage.s3.enabled }}
           - name: FILE_STORAGE
