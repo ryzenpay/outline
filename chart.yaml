@@ -1,0 +1,11 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: outline
+spec:
+  chart: oci://harbor.ryzen.me/library/outline
+  version: 0.1.0
+  targetNamespace: outline
+  createNamespace: true
+  valuesContent: |-
+    #VALUES HERE
