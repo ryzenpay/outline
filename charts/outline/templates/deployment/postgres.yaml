@@ -1,14 +1,16 @@
+{{ if not .Values.database.existing }}
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: outline-postgresql
   namespace: {{ .Release.Namespace }}
 spec:
-  instances: 1
+  instances: {{ .Values.database.instances }}
   storage:
-    size: 5Gi
-    storageClass: retain
+    size: {{ .Values.database.persistence.size }}
+    storageClass: {{ .Values.database.persistence.storageClass }}
   bootstrap:
     initdb:
-      database: outline
-      owner: outline
+      database: {{ .Values.database.secret.database }}
+      owner: {{ .Values.database.secret.username }}
+{{ end }}

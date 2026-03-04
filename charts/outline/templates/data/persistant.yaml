@@ -10,6 +10,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   storageClassName: {{ .Values.storage.storageClassName }}
+  volumeName: {{ .Values.storage.existing | default "" }}
   resources:
     requests:
       storage: {{ .Values.storage.size }}

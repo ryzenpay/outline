@@ -29,6 +29,19 @@ storage:
     pathStyle: true
   storageClassName: ""
   size: 10Gi
+  existing: ""
+
+database:
+  existing: false
+  instances: 1
+  secret:
+    existing: false
+    name: outline-secret
+    url: ""
+    urlKey: uri
+  persistence:
+    size: 5Gi
+    storageClass: ""
 
 oidc:
   enabled: true
