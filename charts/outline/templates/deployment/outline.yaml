@@ -11,7 +11,7 @@ spec:
     matchLabels:
       app: outline
   strategy:
-    type: RollingUpdate
+    type: {{ .Values.strategy.type }}
   template:
     metadata:
       labels:
