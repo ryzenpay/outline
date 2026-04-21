@@ -39,7 +39,7 @@ database:
   instances: 1
   secret:
     existing: false
-    name: outline-secret
+    name: outline-postgresql-app
     url: ""
     urlKey: uri
   persistence:
