@@ -2,25 +2,26 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: outline
-  name: {{ .Release.Name }}
+    app: {{ include "outline.name" . }}
+  name: {{ include "outline.fullname" . }}
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: outline
+      app: {{ include "outline.name" . }}
   strategy:
     type: {{ .Values.strategy.type }}
   template:
     metadata:
       labels:
-        app: outline
+        app: {{ include "outline.name" . }}
     spec:
       securityContext:
-        fsGroup: 1000
+        fsGroup: {{ .Values.podSecurityContext.fsGroup }}
       containers:
         - image: {{ print .Values.image.repository ":" .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           name: outline
           ports:
             - containerPort: {{ .Values.service.port }}
@@ -35,27 +36,27 @@ spec:
           - name: DATABASE_URL
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.database.secret.name }}
+                name: {{ include "outline.dbSecretName" . }}
                 key: {{ .Values.database.secret.urlKey }}
           - name: SMTP_FROM_EMAIL
-            value: outline@ryzen.me
+            value: {{ .Values.outline.smtp.fromEmail | quote }}
           - name: LOG_LEVEL
-            value: info
+            value: {{ .Values.outline.logLevel | quote }}
           - name: FORCE_HTTPS
-            value: "true"
+            value: {{ .Values.outline.forceHttps | quote }}
           - name: SECRET_KEY
             valueFrom:
               secretKeyRef:
-                name: outline-secret
+                name: {{ include "outline.secretName" . }}
                 key: SECRET_KEY
           - name: UTILS_SECRET
             valueFrom:
               secretKeyRef:
-                name: outline-secret
+                name: {{ include "outline.secretName" . }}
                 key: UTILS_SECRET
 {{ if .Values.redis.enabled }}
-          - name: REDIS_URL 
-            value: redis://outline-redis-valkey:6379
+          - name: REDIS_URL
+            value: {{ include "outline.redisUrl" . | quote }}
 {{ end }}
 {{ if .Values.oidc.enabled }}
           - name: OIDC_ISSUER_URL
@@ -65,36 +66,41 @@ spec:
           - name: OIDC_CLIENT_SECRET
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.oidc.secret.name }}
+                name: {{ include "outline.oidcSecretName" . }}
                 key: {{ .Values.oidc.secret.clientSecretKeyRef }}
 {{ end }}
 {{ if .Values.storage.s3.enabled }}
           - name: FILE_STORAGE
             value: s3
           - name: AWS_ACCESS_KEY_ID
-            value: outline
+            value: {{ .Values.storage.s3.accessKey | quote }}
           - name: AWS_SECRET_ACCESS_KEY
             valueFrom:
               secretKeyRef:
-                name: outline-secret
-                key: S3_SECRET_KEY
+                name: {{ include "outline.secretName" . }}
+                key: {{ .Values.storage.s3.secretKeyRef }}
           - name: AWS_REGION
             value: {{ .Values.storage.s3.region }}
           - name: AWS_S3_UPLOAD_BUCKET_URL
-            value: http://outline-s3-minio:9000
+            value: {{ include "outline.s3Endpoint" . | quote }}
           - name: AWS_S3_UPLOAD_BUCKET_NAME
-            value: outline
+            value: {{ .Values.storage.s3.bucket | quote }}
           - name: AWS_S3_FORCE_PATH_STYLE
             value: {{ .Values.storage.s3.pathStyle | quote }}
 {{ else }}
           - name: FILE_STORAGE
             value: local
+{{ end }}
+{{- with .Values.outline.extraEnv }}
+          {{- toYaml . | nindent 10 }}
+{{- end }}
+{{ if not .Values.storage.s3.enabled }}
           volumeMounts:
             - name: outline
               mountPath: /var/lib/outline/data
       volumes:
         - name: outline
           persistentVolumeClaim:
-            claimName: outline-pvc
+            claimName: {{ printf "%s-pvc" (include "outline.fullname" .) }}
 {{ end }}
       restartPolicy: Always

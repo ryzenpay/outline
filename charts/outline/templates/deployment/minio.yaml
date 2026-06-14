@@ -2,24 +2,24 @@
 apiVersion: helm.cattle.io/v1
 kind: HelmChart
 metadata:
-  name: outline-s3
-  namespace: {{ .Values.namespace }}
+  name: {{ printf "%s-s3" (include "outline.fullname" .) }}
+  namespace: {{ .Release.Namespace }}
 spec:
-  repo: https://charts.min.io/
-  chart: minio
-  targetNamespace: {{ .Values.namespace }}
+  repo: {{ .Values.storage.s3.chart.repo }}
+  chart: {{ .Values.storage.s3.chart.name }}
+  targetNamespace: {{ .Release.Namespace }}
   createNamespace: true
   valuesContent: |-
-    replicas: 1
-    mode: standalone
+    replicas: {{ .Values.storage.s3.replicas }}
+    mode: {{ .Values.storage.s3.mode }}
     persistence:
-      size: 30Gi
+      size: {{ .Values.storage.s3.persistence.size }}
     buckets:
-      - name: outline
+      - name: {{ .Values.storage.s3.bucket }}
         policy: upload
     users:
-      - accessKey: outline
-        existingSecret: outline-secret
-        existingSecretKey: S3_SECRET_KEY
+      - accessKey: {{ .Values.storage.s3.accessKey }}
+        existingSecret: {{ include "outline.secretName" . }}
+        existingSecretKey: {{ .Values.storage.s3.secretKeyRef }}
         policy: readwrite
 {{ end }}

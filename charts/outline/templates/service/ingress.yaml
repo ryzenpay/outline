@@ -5,7 +5,7 @@ metadata:
   annotations:
     {{- toYaml . | nindent 4 }}
 {{- end }}
-  name: outline
+  name: {{ include "outline.fullname" . }}
   namespace: {{ .Release.Namespace }}
 spec:
   ingressClassName: {{ .Values.ingress.className }}
@@ -17,7 +17,7 @@ spec:
             pathType: {{ .Values.ingress.pathType }}
             backend:
               service:
-                name: outline
+                name: {{ include "outline.fullname" . }}
                 port:
                   number: {{ $.Values.service.port }}
 {{-  if .Values.storage.s3.enabled }}
@@ -28,7 +28,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: outline-s3-minio
+                name: {{ include "outline.minioService" . }}
                 port:
                   number: 9000
 {{- end }}

@@ -2,7 +2,7 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: outline-postgresql
+  name: {{ include "outline.postgresName" . }}
   namespace: {{ .Release.Namespace }}
 spec:
   instances: {{ .Values.database.instances }}

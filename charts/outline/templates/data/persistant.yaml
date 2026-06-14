@@ -2,13 +2,13 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: outline-pvc
+  name: {{ printf "%s-pvc" (include "outline.fullname" .) }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app: outline
+    app: {{ include "outline.name" . }}
 spec:
   accessModes:
-    - ReadWriteOnce
+    - {{ .Values.storage.accessMode }}
   storageClassName: {{ .Values.storage.storageClassName }}
   volumeName: {{ .Values.storage.existing | default "" }}
   resources:

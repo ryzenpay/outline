@@ -1,3 +1,6 @@
+# Override the base name used for all resources (default: "outline").
+fullnameOverride: ""
+
 replicaCount: 1
 
 strategy:
@@ -7,6 +10,10 @@ image:
   repository: docker.getoutline.com/outlinewiki/outline
   pullPolicy: IfNotPresent
   tag: "latest"
+
+# Pod-level security context for the outline deployment.
+podSecurityContext:
+  fsGroup: 1000
 
 service:
   type: ClusterIP
@@ -22,26 +29,68 @@ ingress:
   tls:
     secretName: ""
 
+# Outline application configuration (maps to container env vars).
+outline:
+  logLevel: info
+  forceHttps: false
+  smtp:
+    fromEmail: outline@ryzen.me
+  # Extra environment variables appended to the outline container, e.g.:
+  # extraEnv:
+  #   - name: DEFAULT_LANGUAGE
+  #     value: en_US
+  extraEnv: []
+
+# Shared secret holding generated keys (SECRET_KEY, UTILS_SECRET, S3_SECRET_KEY, OIDC client secret).
+secret:
+  # Defaults to "<fullname>-secret" when empty.
+  name: ""
+
 redis:
   enabled: true
+  # Connection URL. Defaults to the bundled valkey service when empty.
+  url: ""
+  # Source chart for the bundled redis (valkey) deployment.
+  chart:
+    repo: https://valkey.io/valkey-helm/
+    name: valkey
 
 storage:
   s3:
     enabled: true
     region: us-east-1
     pathStyle: true
+    accessKey: outline
+    bucket: outline
+    # Upload bucket endpoint URL. Defaults to the bundled minio service when empty.
+    endpoint: ""
+    # Key within the shared secret holding the S3 secret access key.
+    secretKeyRef: S3_SECRET_KEY
+    # Bundled MinIO deployment settings.
+    replicas: 1
+    mode: standalone
+    persistence:
+      size: 30Gi
+    chart:
+      repo: https://charts.min.io/
+      name: minio
   storageClassName: ""
   size: 10Gi
   existing: ""
+  accessMode: ReadWriteOnce
 
 database:
   existing: false
   instances: 1
   secret:
     existing: false
-    name: outline-postgresql-app
+    # Defaults to the CNPG-generated "<fullname>-postgresql-app" secret when empty.
+    name: ""
     url: ""
     urlKey: uri
+    # Database name and owner created by the bundled CNPG cluster.
+    database: outline
+    username: outline
   persistence:
     size: 5Gi
     storageClass: ""
@@ -51,7 +100,8 @@ oidc:
   issuerUrl: ""
   clientId: outline
   secret:
-    name: outline-secret
+    # Defaults to the shared secret name when empty.
+    name: ""
     existing: false
     clientSecretKeyRef: OIDC_CLIENT_SECRET
     clientSecret: ""
